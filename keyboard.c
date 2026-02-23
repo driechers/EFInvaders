@@ -26,34 +26,42 @@ static CHAR16 decode(EFI_KEY_DATA KeyData)
 EFI_STATUS key_decode(CHAR16 *key, BOOLEAN *pressed)
 {
     static CHAR16 latest_key = 0;
-    UINTN index;
 
-    EFI_STATUS status = EFI_SUCCESS;
+    EFI_STATUS Status = EFI_SUCCESS;
     EFI_KEY_DATA KeyData;
 
-    gBS->WaitForEvent(1, &TextInEx->WaitForKeyEx, &index);
-    status = TextInEx->ReadKeyStrokeEx(TextInEx, &KeyData);
+    Status = TextInEx->ReadKeyStrokeEx(TextInEx, &KeyData);
 
-    if(status == EFI_SUCCESS) {
+    if(Status == EFI_SUCCESS) {
         *key = decode(KeyData);
         latest_key = *key;
 	*pressed = TRUE;
 	return EFI_SUCCESS;
     }
-    else if (status == EFI_NOT_READY) {
+    else if (Status == EFI_NOT_READY) {
         *key = latest_key;
 	*pressed = FALSE;
 	return EFI_SUCCESS;
     }
 
-    return status;
+    return Status;
 }
 
 EFI_STATUS key_initialize()
 {
-    EFI_STATUS status;
+    EFI_STATUS Status;
 
-    // Locate the Protocol
-    status = gBS->LocateProtocol(&gEfiSimpleTextInputExProtocolGuid, NULL, (VOID **)&TextInEx);
-    return status;
+    Status = gBS->HandleProtocol(
+                    gST->ConsoleInHandle,
+                    &gEfiSimpleTextInputExProtocolGuid,
+                    (VOID**)&TextInEx
+                    );
+    if (EFI_ERROR(Status))
+      return Status;
+
+    Status = TextInEx->Reset(TextInEx, FALSE);
+    if (EFI_ERROR(Status))
+      return Status;
+
+    return EFI_SUCCESS;
 }
