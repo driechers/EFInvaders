@@ -37,6 +37,7 @@
   video.c
   keyboard.c
   main.c
+  game.c
 
 [Packages]
   MdePkg/MdePkg.dec
