@@ -81,7 +81,7 @@ void display()
 {
   // clear screen
   video_usecolor(0,0);
-  video_fill(0,0,80,25,0);
+  video_fill(0,0,80,25,L' ');
 
   // display shots
   {
@@ -123,69 +123,67 @@ void keywork()
 {
   CHAR16 key;
   BOOLEAN pressed;
-  for (;;) {
-    key_decode(&key,&pressed);
-    switch (key) {
-    case L'<':
-      if (pressed) {
-	shipmove=-1;
-      }else{
-	if (shipmove==-1) shipmove=0;
-      };
-      break;
-    case L'>':
-      if (pressed) {
-	shipmove=1;
-      }else{
-	if (shipmove==1) shipmove=0;
-      };
-      break;
-    case L' ':
-      {
-	UINT8 i;
-	if (!pressed) break;
-	for (i=0;i<NUMSHOTS;++i) {
-	  if (shots[i].x==-1) {
-	    shots[i].x=ship;
-	    shots[i].y=24;
-	    break;
-	  };
-	};
-      };
-      break;
-    case L'x':
-      return;
-    case L'@':
-      if (pressed) {
-        //reboot();
-	//TODO quit
-      }
-      break;
-    case L'u':
-      if (pressed) {
-        changecolors(+1);
-      }
-      break;
-    case L'd':
-      if (pressed) {
-        changecolors(-1);
-      }
-      break;
-    case L'0':
-      if (pressed) {
-        if (psychedelic==FALSE) psychedelic=TRUE;
-        else {
-          psychedelic=FALSE;
-          shotcolor=4,shipcolor=5,aliencolor=3;
-        }
-      }
-      break;
-    case L'p':
-      if (pressed) {
-        displaypause();
-      }
-      break;
+  key_decode(&key,&pressed);
+  switch (key) {
+  case L'<':
+    if (pressed) {
+      shipmove=-1;
+    }else{
+      if (shipmove==-1) shipmove=0;
     };
+    break;
+  case L'>':
+    if (pressed) {
+      shipmove=1;
+    }else{
+      if (shipmove==1) shipmove=0;
+    };
+    break;
+  case L' ':
+    {
+      UINT8 i;
+      if (!pressed) break;
+      for (i=0;i<NUMSHOTS;++i) {
+        if (shots[i].x==-1) {
+          shots[i].x=ship;
+          shots[i].y=24;
+          break;
+        };
+      };
+    };
+    break;
+  case L'x':
+    return;
+  case L'@':
+    if (pressed) {
+      //reboot();
+      //TODO quit
+    }
+    break;
+  case L'u':
+    if (pressed) {
+      changecolors(+1);
+    }
+    break;
+  case L'd':
+    if (pressed) {
+      changecolors(-1);
+    }
+    break;
+  case L'0':
+    if (pressed) {
+      if (psychedelic==FALSE) psychedelic=TRUE;
+      else {
+        psychedelic=FALSE;
+        shotcolor=4,shipcolor=5,aliencolor=3;
+      }
+    }
+    break;
+  case L'p':
+    if (pressed) {
+      displaypause();
+    }
+    break;
   };
 };
 
@@ -259,37 +257,31 @@ void calculate()
 
 void displaygameover()
 {
-  CHAR16 key;
-  BOOLEAN pressed;
-
   video_usecolor(6,1);
   video_putstring(30,10,L"  GAME OVER  ");
   video_putstring(30,11,winner ? L"   YOU WIN   " : L"  YOU LOSE   ");
   video_putstring(30,12,L"  PRESS ESC  ");
   video_update();
-  do{
-    key_decode(&key,&pressed);
-  } while (!(pressed&&(key==L'@')));
 };
 
 void game()
 {
-  //   video_blinkchars(FALSE);
   video_hidecursor();
+  // TODO dynamic sizing of game window
+  video_fill(0, 0, 80, 25, L' ');
 
-  //for (;;) {
-    resetgame();
+  resetgame();
 
-    while (!gameover) {
-      display();
-      //sounder();
-      keywork();
-      calculate();
-      if (psychedelic==TRUE) changecolors(+1);
-      
-      gBS->Stall(1000);  // 1 millisecond
-    };
+  while (!gameover) {
+    display();
+    //sounder();
+    keywork();
+    calculate();
+    if (psychedelic==TRUE) changecolors(+1);
 
-    displaygameover();
-  //};
+    gBS->Stall(10000);
+  };
+
+  displaygameover();
+  video_usecolor(5,0);
 };
