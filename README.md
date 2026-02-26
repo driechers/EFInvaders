@@ -1,7 +1,7 @@
 # EFInvaders
 EFInvaders is a Space Invaders UEFI application inspired by [GRUB Invaders by erikyyy](http://www.erikyyy.de/invaders/). That can easily be added to your [EDK2](https://github.com/tianocore/edk2) project as a lovely easter egg.
 
-![EFInvaders](images/grubinvaders.png) 
+![EFInvaders](images/grubinvaders.png = x720) 
 
 ## UEFI Compliance
 EFInvaders utilizes only two UEFI protocols EFI\_SIMPLE\_TEXT\_OUTPUT\_PROTOCOL to display the ascii art video frames, and EFI\_SIMPLE\_TEXT\_INPUT\_EX\_PROTOCOL.
